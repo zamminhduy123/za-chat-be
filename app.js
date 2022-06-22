@@ -29,6 +29,10 @@ app.use(cors(corsOptions));
 //passport
 require("./middlewares/passport")(app);
 
+app.get("/", (req, res) => {
+  res.send("Hello!!");
+});
+
 const checkAuth = require("./middlewares/checkAuth");
 app.use("/authentication", require("./api/auth.api"));
 app.use("/user", checkAuth, require("./api/user.api"));
