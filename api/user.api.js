@@ -6,7 +6,6 @@ const { statusCode } = require("../constant");
 
 router.get("/", async (req, res) => {
   const content = req.query.content;
-  console.log(res.locals.username, content);
   if (res.locals.username === content) {
     res.status(statusCode.SUCCESS).json([]);
     return;
