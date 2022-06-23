@@ -42,6 +42,7 @@ const setAuthToken = (res, user) => {
 };
 
 router.post("/login", (req, res, next) => {
+  console.log(req.body);
   passport.authenticate("local", function (err, user, info) {
     if (err) {
       console.log("Error", err);

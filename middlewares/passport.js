@@ -24,7 +24,7 @@ module.exports = (app) => {
           const pwdMatch = await bcrypt.compare(password, user.password);
           if (!pwdMatch) {
             return done(null, false, {
-              message: "Incorrect password.",
+              message: "Incorrect password",
             });
           }
           return done(null, user);

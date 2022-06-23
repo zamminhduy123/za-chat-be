@@ -15,8 +15,10 @@ const connection = {
   max: 30,
 };
 
-exports.db = pgp({
+const productionConnection = {
   connectionString: `${process.env.DATABASE_URL}?sslmode=require`,
   max: 30,
-});
+};
+
+exports.db = pgp(productionConnection);
 exports.pgp = pgp;
