@@ -84,7 +84,7 @@ router.post("/logout", (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, name, phone, gender } = req.body;
 
   const hashedPassword = await bcrypt.hash(password, saltRounds);
   let account = await accountModel.get(username);
@@ -92,13 +92,18 @@ router.post("/register", async (req, res) => {
     res.status(statusCode.BAD_REQUEST).send("Username already existed");
     return;
   }
-  const rs = await accountModel.insert({ username, password: hashedPassword });
+  const rs = await accountModel.insert({
+    username,
+    password: hashedPassword,
+    name,
+    phone,
+    gender,
+  });
   if (rs) {
     res.status(statusCode.CREATED).send("Account created successfully");
   } else {
     res.status(statusCode.SERVER_ERROR).send("Something went wrong");
   }
-  so;
 });
 
 module.exports = router;
