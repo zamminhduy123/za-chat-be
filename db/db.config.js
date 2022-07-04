@@ -20,5 +20,5 @@ const productionConnection = {
   max: 30,
 };
 
-exports.db = pgp(isProduction ? productionConnection : connection);
+exports.db = pgp(productionConnection);
 exports.pgp = pgp;
