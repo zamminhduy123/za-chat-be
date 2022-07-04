@@ -41,6 +41,36 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/newConversation", (req, res) => {});
+router.post("/newGroup", async (req, res) => {
+  const newGroupConversation = req.body;
+  if (!newGroupConversation) {
+    return res.status(statusCode.BAD_REQUEST).send("Need users");
+  } else {
+    if (newGroupConversation.users.length <= 1) {
+      return res
+        .status(statusCode.BAD_REQUEST)
+        .send("Group members need to be bigger than 2");
+    }
+    try {
+      //create conversation
+      const newConversation =
+        await conversationModel.createConversationWithUsers(
+          [
+            ...newGroupConversation.users.map((user) => user.username),
+            res.locals.username,
+          ],
+          newGroupConversation.name
+        );
+      await fillDataConversation(newConversation, res.locals.username);
+      console.log("GROUP CREATED ============================ ");
+      console.log(newConversation);
+      res.status(statusCode.CREATED).json(newConversation);
+    } catch (err) {
+      console.log(err);
+      // emit error to user
+      res.status(statusCode.SERVER_ERROR).send(err);
+    }
+  }
+});
 
 module.exports = router;

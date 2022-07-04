@@ -23,7 +23,7 @@ CREATE TABLE "user" (
 
 INSERT INTO "user"("username", "password", "name","phone","avatar")
 VALUES 
-	('user', '$2b$10$8RXK4w.tYJ4XTO0ZwnkiJuAieFMfrXtTV4UBxpVpJrGMYKnUt6sBy', 'Duy','0399477967', 'https://scontent.fsgn5-11.fna.fbcdn.net/v/t39.30808-6/275280419_5688420371173226_8342502347923452278_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=fUOgnQpJM2cAX8UzJP5&tn=9r3oez4sgMEzoMD2&_nc_ht=scontent.fsgn5-11.fna&oh=00_AT8hC635z9abDagL2Bp8eVd6aPfu-6ONdQI8W43VTTcNRw&oe=62B5D6BD'),
+	('user', '$2b$10$8RXK4w.tYJ4XTO0ZwnkiJuAieFMfrXtTV4UBxpVpJrGMYKnUt6sBy', 'Duy','0399477967', 'https://assets.teenvogue.com/photos/60802540112a89b8d0d504e0/4:3/w_3711,h_2783,c_limit/GettyImages-1199371669.jpg'),
 	( 'user1', '$2b$10$8RXK4w.tYJ4XTO0ZwnkiJuAieFMfrXtTV4UBxpVpJrGMYKnUt6sBy', 'Kendall Jenner', '0909320249','https://kenh14cdn.com/thumb_w/660/203336854389633024/2021/9/15/gettyimages-1340153581-1631680268419553194521.jpeg'),
 	( 'user2', '$2b$10$8RXK4w.tYJ4XTO0ZwnkiJuAieFMfrXtTV4UBxpVpJrGMYKnUt6sBy', 'I lon mút','0123456789', 'https://ichef.bbci.co.uk/news/976/cpsprodpb/7727/production/_103330503_musk3.jpg'),
 	( 'user3', '$2b$10$8RXK4w.tYJ4XTO0ZwnkiJuAieFMfrXtTV4UBxpVpJrGMYKnUt6sBy', 'Mắc zức cờ bớt','1234567890', 'https://vtv1.mediacdn.vn/thumb_w/650/2021/4/25/photo-1-1619306202198493971443.jpg'),

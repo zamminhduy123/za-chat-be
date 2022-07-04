@@ -5,6 +5,8 @@ const { Server } = require("socket.io");
 const fs = require("fs");
 const mkdirp = require("mkdirp");
 
+const bodyParser = require("body-parser");
+
 const userSocketMap = new Map([]);
 const socketUserMap = new Map([]);
 const typingListen = new Map([]);
@@ -15,12 +17,16 @@ require("dotenv").config();
 
 const app = express();
 app.use(cookieParser());
+
+app.use(bodyParser.json({ limit: "10000kb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "10000kb", extended: true }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const corsOptions = {
   //To allow requests from client
-  origin: ["*"],
+  origin: ["*", "http://localhost:3000"],
   credentials: true,
   secure: true,
 };
@@ -35,6 +41,7 @@ app.get("/", (req, res) => {
 
 const checkAuth = require("./middlewares/checkAuth");
 app.use("/authentication", require("./api/auth.api"));
+app.use("/file", require("./api/file.api"));
 app.use("/user", checkAuth, require("./api/user.api"));
 app.use("/conversation", checkAuth, require("./api/conversation.api"));
 app.use("/message", checkAuth, require("./api/message.api"));
@@ -53,6 +60,13 @@ const conversationModel = require("./models/conversation.model");
 const memberModel = require("./models/member.model");
 const messageModel = require("./models/message.model");
 
+const disconnectClient = (socket) => {
+  console.log("Client disconnect", socket.id);
+  const username = socketUserMap.get(socket);
+  userSocketMap.delete(username);
+  socketUserMap.delete(socket);
+};
+
 //authorize
 io.use(async (socket, next) => {
   if (
@@ -67,6 +81,11 @@ io.use(async (socket, next) => {
     // console.log(tokenData);
     const user = await userModel.get(tokenData.username);
     if (user) {
+      const existedSocket = userSocketMap.get(user.username);
+      if (existedSocket) {
+        existedSocket.emit("ERROR", 409);
+        disconnectClient(existedSocket);
+      }
       userSocketMap.set(tokenData.username, socket);
       socketUserMap.set(socket, tokenData.username);
       next();
@@ -110,17 +129,18 @@ io.on("connection", async (socket) => {
         const socket = await userSocketMap.get(member.username);
         if (socket) {
           if (member.username != data) {
-            socket.emit("TYPING_RECEIVE", true);
+            const sender = await userModel.get(data);
+            socket.emit("TYPING_RECEIVE", {
+              conversation_id,
+              senderName: sender.name,
+            });
           }
         }
       }
     }
   });
   socket.on("disconnect", () => {
-    console.log("Client disconnect", socket.id);
-    const username = socketUserMap.get(socket);
-    userSocketMap.delete(username);
-    socketUserMap.delete(socket);
+    disconnectClient(socket);
   });
 });
 

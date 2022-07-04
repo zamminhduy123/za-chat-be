@@ -14,7 +14,7 @@ const imageFileHandler = require("../helper/imageFileHandler");
 
 module.exports = {
   invoke: async (userSocketMap, data) => {
-    console.log("Message receive from", data.sender);
+    console.log("Message receive from", data);
     const userSocket = userSocketMap.get(data.sender);
 
     const users = data.to;
@@ -23,44 +23,39 @@ module.exports = {
       status: 4,
     };
 
-    if (data.type === 1) {
-      let result;
-
-      try {
-        result = await imageFileHandler.saveToCloudinary(data.content);
-        data.content = result.url;
-      } catch (err) {
-        // emit error to user
-        userSocket.emit(event.MESSAGE_SENT, messageError);
-        return;
-      }
-    }
-
     let updatedConversation;
     if (data.conversation_id) {
       updatedConversation = await conversationModel.get(data.conversation_id);
     } else {
-      try {
-        //create conversation
-        updatedConversation =
-          await conversationModel.createConversationWithUsers([
-            ...users,
-            data.sender,
-          ]);
-      } catch (err) {
-        console.log(err);
-        // emit error to user
-        userSocket.emit(event.MESSAGE_SENT, messageError);
-        return;
+      updatedConversation = await conversationModel.getDirectConversation(
+        users[0],
+        data.sender
+      );
+      console.log("EXISTED", updatedConversation);
+      if (!updatedConversation) {
+        try {
+          //create conversation
+          updatedConversation =
+            await conversationModel.createConversationWithUsers([
+              ...users,
+              data.sender,
+            ]);
+        } catch (err) {
+          console.log(err);
+          // emit error to user
+          userSocket.emit(event.MESSAGE_SENT, messageError);
+          return;
+        }
       }
     }
+    console.log("updated conversation", updatedConversation);
     const newMessage = {
       sender: data.sender,
       type: data.type,
       content: data.content,
       conversation_id: updatedConversation.id,
     };
-    console.log("updated conversation", updatedConversation);
+
     let messageInserted;
     try {
       //insert into DB
@@ -77,14 +72,15 @@ module.exports = {
       return;
     }
 
+    await fillDataConversation(updatedConversation, data.sender);
+    // console.log(updatedConversation);
     //server receive user message
-    console.log("Message inserted", messageInserted);
+    console.log("Message inserted", messageInserted, data.clientId);
     userSocket.emit(event.MESSAGE_SENT, {
       ...messageInserted,
       clientId: data.clientId,
     });
 
-    await fillDataConversation(updatedConversation, data.sender);
     //send message to people in conversation ID
     const members = await memberModel.getMemberByConversationId(
       updatedConversation.id
@@ -95,6 +91,7 @@ module.exports = {
         if (member.username != data.sender) {
           socket.emit(event.RECEIVE_MESSAGE, messageInserted);
         }
+        await fillDataConversation(updatedConversation, member.username);
         socket.emit(event.CONVERSATION_CHANGE, updatedConversation);
       }
     }

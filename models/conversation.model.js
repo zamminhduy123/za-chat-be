@@ -73,12 +73,12 @@ module.exports = {
       console.log("Error account.model/getByUsername", e);
     }
   },
-  createConversationWithUsers: async (users) => {
+  createConversationWithUsers: async (users, name) => {
     try {
       let conversation = "";
       await db.tx("add-new-conversation", async (t) => {
         conversation = await t.one(
-          `INSERT INTO "${tbName}"("${tbFileds.name}") values ('New Conversation') RETURNING *`
+          `INSERT INTO "${tbName}"("${tbFileds.name}") values ('${name}') RETURNING *`
         );
         for (const user of users) {
           await t.one(
@@ -89,6 +89,40 @@ module.exports = {
       return conversation;
     } catch (error) {
       throw error;
+    }
+  },
+  createGroupConversation: async (group) => {
+    try {
+      let conversation = "";
+      await db.tx("add-new-conversation", async (t) => {
+        conversation = await t.one(
+          `INSERT INTO "${tbName}"("${tbFileds.name}") values ('${group.name}') RETURNING *`
+        );
+        for (const user of group.users) {
+          await t.one(
+            `INSERT INTO "member"("conversation_id","username") values ('${conversation.id}','${user}') RETURNING *`
+          );
+        }
+      });
+      return conversation;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getDirectConversation: async (user_1, user_2) => {
+    const queryStr = pgp.as.format(
+      `SELECT * FROM "${tbName}" 
+      where ${tbFileds.id} in (
+      select "m1"."conversation_id" from "member" m1, "member" m2 
+      where "m1".username = '${user_1}' and "m2".username='${user_2}' 
+      and m1.conversation_id = m2.conversation_id)`
+    );
+    try {
+      // one: trả về 1 kết quả
+      const res = await db.oneOrNone(queryStr);
+      return res;
+    } catch (e) {
+      console.log("Error account.model/getByUsername", e);
     }
   },
 };

@@ -49,9 +49,25 @@ const imageProcess = (base64) => {
   return __dirname + "/upload/" + savedFilename;
 };
 
-const saveToCloudinary = async (data) => {
+const saveToCloudinary = async (data, folder) => {
   return new Promise((resolve, reject) => {
-    cloudinary.v2.uploader.upload(data, function (error, result) {
+    cloudinary.v2.uploader.upload(
+      data,
+      { folder: folder, resource_type: "auto" },
+      function (error, result) {
+        console.log(error);
+        if (error) {
+          return reject(new Error(error));
+        } else {
+          return resolve(result);
+        }
+      }
+    );
+  });
+};
+const saveToCloudinaryFile = async (file) => {
+  return new Promise((resolve, reject) => {
+    cloudinary.v2.uploader.upload(file, function (error, result) {
       if (error) {
         return reject(new Error(error));
       } else {

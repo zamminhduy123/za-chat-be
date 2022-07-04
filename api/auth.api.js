@@ -11,6 +11,8 @@ const { statusCode } = require("../constant");
 const checkAuth = require("../middlewares/checkAuth");
 const userModel = require("../models/user.model");
 
+const imageFileHandler = require("../helper/imageFileHandler");
+
 const saltRounds = 10,
   secretKey = "ThisIsASecretKey";
 
@@ -83,8 +85,14 @@ router.post("/logout", (req, res) => {
   res.status(statusCode.SUCCESS).send("logout successfully");
 });
 
-router.post("/register", async (req, res) => {
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
+const path = require("path");
+const { unlink } = require("node:fs/promises");
+
+router.post("/register", upload.single("avatar"), async (req, res) => {
   const { username, password, name, phone, gender } = req.body;
+  const avatar = req.file;
 
   const hashedPassword = await bcrypt.hash(password, saltRounds);
   let account = await accountModel.get(username);
@@ -92,12 +100,29 @@ router.post("/register", async (req, res) => {
     res.status(statusCode.BAD_REQUEST).send("Username already existed");
     return;
   }
+  let phoneNumber = await accountModel.getByPhone(phone);
+  if (phoneNumber) {
+    res.status(statusCode.BAD_REQUEST).send("Phone already existed");
+    return;
+  }
+  let uploadResult;
+  try {
+    const pathToAvatar = path.join(__dirname, "../uploads/", avatar.filename);
+    uploadResult = avatar
+      ? await imageFileHandler.saveToCloudinary(pathToAvatar, "avatar")
+      : null;
+    await unlink(pathToAvatar);
+    console.log("image result", result);
+  } catch (err) {
+    console.log("err uploading image to cloudinary", err);
+  }
   const rs = await accountModel.insert({
     username,
     password: hashedPassword,
     name,
     phone,
     gender,
+    avatar: uploadResult.url,
   });
   if (rs) {
     res.status(statusCode.CREATED).send("Account created successfully");
