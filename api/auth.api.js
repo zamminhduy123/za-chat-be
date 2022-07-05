@@ -117,7 +117,7 @@ router.post("/register", upload.single("avatar"), async (req, res) => {
         console.log("\nDeleted file", pathToAvatar);
       }
     });
-    console.log("image result", result);
+    console.log("image result", uploadResult);
   } catch (err) {
     console.log("err uploading image to cloudinary", err);
   }
