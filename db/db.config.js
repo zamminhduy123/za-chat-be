@@ -21,4 +21,5 @@ const productionConnection = {
 };
 
 exports.db = pgp(productionConnection);
+// exports.db = pgp(isProduction ? productionConnection : connection);
 exports.pgp = pgp;

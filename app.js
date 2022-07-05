@@ -18,8 +18,7 @@ require("dotenv").config();
 const app = express();
 app.use(cookieParser());
 
-app.use(bodyParser.json({ limit: "10000kb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "10000kb", extended: true }));
+app.use(bodyParser.raw({ type: "application/octet-stream", limit: "100mb" }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
