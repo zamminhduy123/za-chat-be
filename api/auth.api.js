@@ -88,7 +88,7 @@ router.post("/logout", (req, res) => {
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const path = require("path");
-const { unlink } = require("fs");
+const fs = require("fs");
 
 router.post("/register", upload.single("avatar"), async (req, res) => {
   const { username, password, name, phone, gender } = req.body;
@@ -111,7 +111,7 @@ router.post("/register", upload.single("avatar"), async (req, res) => {
     uploadResult = avatar
       ? await imageFileHandler.saveToCloudinary(pathToAvatar, "avatar")
       : null;
-    unlink(pathToAvatar, (err) => {
+    fs.unlinkSync(pathToAvatar, (err) => {
       if (err) console.log(err);
       else {
         console.log("\nDeleted file", pathToAvatar);

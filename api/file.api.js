@@ -19,7 +19,6 @@ var storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 const path = require("path");
-const { unlink } = require("node:fs/promises");
 
 router.post("/", upload.single("file"), async (req, res) => {
   const file = req.file;
@@ -36,7 +35,7 @@ router.post("/", upload.single("file"), async (req, res) => {
     console.log("err uploading image to cloudinary");
     res.status(statusCode.SERVER_ERROR).send(err);
   } finally {
-    await unlink(pathToFile);
+    fs.unlinkSync(pathToFile);
   }
 });
 
