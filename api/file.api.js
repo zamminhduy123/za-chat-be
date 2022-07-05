@@ -55,18 +55,18 @@ router.post("/chunkUpload", async (req, res) => {
   if (lastChunk) {
     //get and send file to cloud then send back to user the URL
     console.log("file uploaded");
-    // try {
-    //   uploadResult = await imageFileHandler.saveToCloudinary(
-    //     pathToFile,
-    //     file.mimetype
-    //   );
-    //   res.status(statusCode.SUCCESS).send(uploadResult.url);
-    // } catch (err) {
-    //   console.log("err uploading image to cloudinary");
-    //   res.status(statusCode.SERVER_ERROR).send(err);
-    // } finally {
-    //   await unlink(pathToFile);
-    // }
+    try {
+      uploadResult = await imageFileHandler.saveToCloudinary(
+        pathToFile,
+        "file"
+      );
+      res.status(statusCode.SUCCESS).send(uploadResult.url);
+    } catch (err) {
+      console.log("err uploading image to cloud");
+      res.status(statusCode.SERVER_ERROR).send(err);
+    } finally {
+      await unlink(pathToFile);
+    }
   } else {
     res.status(statusCode.SUCCESS).send();
   }
