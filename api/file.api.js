@@ -62,7 +62,7 @@ router.post("/chunkUpload", async (req, res) => {
       res.status(statusCode.SUCCESS).send(uploadResult.url);
     } catch (err) {
       console.log("err uploading image to cloud");
-      res.status(statusCode.SERVER_ERROR).send(err);
+      res.status(statusCode.BAD_REQUEST).send(err);
     } finally {
       fs.unlinkSync(pathToFile);
     }

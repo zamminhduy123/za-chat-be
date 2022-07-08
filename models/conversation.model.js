@@ -111,11 +111,13 @@ module.exports = {
   },
   getDirectConversation: async (user_1, user_2) => {
     const queryStr = pgp.as.format(
-      `SELECT * FROM "${tbName}" 
-      where ${tbFileds.id} in (
-      select "m1"."conversation_id" from "member" m1, "member" m2 
-      where "m1".username = '${user_1}' and "m2".username='${user_2}' 
-      and m1.conversation_id = m2.conversation_id)`
+      `select * from conversation c1 where c1.id in 
+      (SELECT conversation.id FROM conversation 
+        where conversation.id in (
+          select "m1"."conversation_id" from "member" m1, "member" m2 
+          where "m1".username = '${user_1}' and "m2".username='${user_2}'
+        and m1.conversation_id = m2.conversation_id))
+      and (select count(*) from "member" m3 where m3.conversation_id=c1.id)=2;`
     );
     try {
       // one: trả về 1 kết quả
