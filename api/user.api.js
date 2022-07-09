@@ -6,10 +6,7 @@ const { statusCode } = require("../constant");
 
 router.get("/", async (req, res) => {
   const content = req.query.content;
-  if (res.locals.username === content) {
-    res.status(statusCode.SUCCESS).json([]);
-    return;
-  }
+  console.log(content);
   if (content) {
     let result = [];
     const userByPhone = await userModel.getByPhone(content);
