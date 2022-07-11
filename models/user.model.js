@@ -10,6 +10,7 @@ const tbFileds = {
   avatar: "avatar",
   phone: "phone",
   created_at: "created_at",
+  lastOnline: "lastOnline",
 };
 const table = new pgp.helpers.TableName({
   table: tbName,
@@ -59,6 +60,17 @@ module.exports = {
       return res;
     } catch (error) {
       console.log("error account.model/acc_create:", error);
+    }
+  },
+  updateLastOnline: async (lastOnlineTime) => {
+    const qStr =
+      pgp.helpers.update(lastOnlineTime, [tbFileds.lastOnline], table) +
+      "RETURNING *";
+    try {
+      const res = await db.one(qStr);
+      return res;
+    } catch (error) {
+      console.log("error account.model/acc_update_lastOnline:", error);
     }
   },
 };

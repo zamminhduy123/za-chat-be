@@ -31,7 +31,7 @@ router.get("/", async (req, res) => {
   for (const conversation of conversations) {
     await fillDataConversation(conversation, username);
   }
-  //console.log(conversations);
+  // //console.log(conversations);
   conversations.sort(sortAlgor);
   //send back result
   if (conversations) {

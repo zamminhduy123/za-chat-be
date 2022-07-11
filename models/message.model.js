@@ -69,10 +69,22 @@ module.exports = {
       console.log("Error message.model/getByConversationId", e);
     }
   },
-  insert: async (entity) => {
+  insert: async (entity, conversation) => {
     const qStr = pgp.helpers.insert(entity, null, table) + "RETURNING *";
+    const convTable = new pgp.helpers.TableName({
+      table: "conversation",
+      schema: schema,
+    });
+    conversation.totalMessage = +conversation.totalMessage + 1;
+    const condition = pgp.as.format(` WHERE "id" = ${conversation.id}`);
+    const updateTotalMessage =
+      pgp.helpers.update(conversation, ["totalMessage"], convTable) + condition;
     try {
-      const res = await db.one(qStr);
+      let res;
+      await db.tx("add-new-message", async (t) => {
+        res = await t.one(qStr);
+        console.log(await t.none(updateTotalMessage));
+      });
       return res;
     } catch (error) {
       console.log("error message.model/insert:", error);

@@ -118,6 +118,7 @@ io.on("connection", async (socket) => {
     }
   });
   socket.on("TYPING_REGISTER", async (data) => {
+    //set register
     typingListen.set(data.sender, data.conversation_id);
   });
   socket.on("TYPING_SEND", async (data) => {

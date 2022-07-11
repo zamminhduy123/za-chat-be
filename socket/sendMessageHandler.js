@@ -14,7 +14,7 @@ const imageFileHandler = require("../helper/imageFileHandler");
 
 module.exports = {
   invoke: async (userSocketMap, data) => {
-    console.log("Message receive from", data);
+    // console.log("Message receive from", data);
     const userSocket = userSocketMap.get(data.sender);
 
     const users = data.to;
@@ -31,7 +31,7 @@ module.exports = {
         users[0],
         data.sender
       );
-      console.log("EXISTED", updatedConversation);
+      // console.log("EXISTED", updatedConversation);
       if (!updatedConversation) {
         try {
           //create conversation
@@ -48,18 +48,21 @@ module.exports = {
         }
       }
     }
-    console.log("updated conversation", updatedConversation);
+    // console.log("updated conversation", updatedConversation);
     const newMessage = {
       sender: data.sender,
       type: data.type,
       content: data.content,
       conversation_id: updatedConversation.id,
     };
-
     let messageInserted;
     try {
       //insert into DB
-      messageInserted = await messageModel.insert(newMessage);
+      console.log();
+      messageInserted = await messageModel.insert(
+        newMessage,
+        updatedConversation
+      );
       console.log(
         await last_messageModel.update(
           updatedConversation.id,
@@ -68,6 +71,7 @@ module.exports = {
       );
     } catch (err) {
       // emit error to user
+      console.log(err);
       userSocket.emit(event.MESSAGE_SENT, messageError);
       return;
     }
@@ -75,7 +79,7 @@ module.exports = {
     await fillDataConversation(updatedConversation, data.sender);
     // console.log(updatedConversation);
     //server receive user message
-    console.log("Message inserted", messageInserted, data.clientId);
+    // console.log("Message inserted", messageInserted, data.clientId);
     userSocket.emit(event.MESSAGE_SENT, {
       ...messageInserted,
       clientId: data.clientId,

@@ -6,6 +6,7 @@ const tbFileds = {
   id: "id",
   name: "name", // Primary Key
   type: "type",
+  totalMessage: "totalMessage",
   created_at: "created_at",
   lastMessage: "lastMessage",
 };
