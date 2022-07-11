@@ -105,21 +105,27 @@ router.post("/register", upload.single("avatar"), async (req, res) => {
     res.status(statusCode.BAD_REQUEST).send("Phone already existed");
     return;
   }
-  let uploadResult;
-  try {
-    const pathToAvatar = path.join(__dirname, "../uploads/", avatar.filename);
-    uploadResult = avatar
-      ? await imageFileHandler.saveToCloudinary(pathToAvatar, "avatar")
-      : null;
-    fs.unlinkSync(pathToAvatar, (err) => {
-      if (err) console.log(err);
-      else {
-        console.log("\nDeleted file", pathToAvatar);
-      }
-    });
-    console.log("image result", uploadResult);
-  } catch (err) {
-    console.log("err uploading image to cloudinary", err);
+
+  //UPLOAD IMAGE TO CLOUD
+  let uploadResult = {
+    url: "",
+  };
+  if (avatar) {
+    try {
+      const pathToAvatar = path.join(__dirname, "../uploads/", avatar.filename);
+      uploadResult = avatar
+        ? await imageFileHandler.saveToCloudinary(pathToAvatar, "avatar")
+        : null;
+      fs.unlinkSync(pathToAvatar, (err) => {
+        if (err) console.log(err);
+        else {
+          console.log("\nDeleted file", pathToAvatar);
+        }
+      });
+      console.log("image result", uploadResult);
+    } catch (err) {
+      console.log("err uploading image to cloudinary", err);
+    }
   }
   const rs = await accountModel.insert({
     username,

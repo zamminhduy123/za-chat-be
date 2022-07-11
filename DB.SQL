@@ -32,6 +32,7 @@ VALUES
 CREATE TABLE "conversation" (
 	"id" serial PRIMARY KEY,
 	"name" varchar(50),
+	"totalMessage" numeric default 0,
 	"create_at" timestamp NOT NULL DEFAULT NOW(),
 	"delete_at" timestamp
 );
