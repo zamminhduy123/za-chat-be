@@ -27,7 +27,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const corsOptions = {
   //To allow requests from client
-  origin: ["*", "http://localhost:3000"],
+  origin: ["*", "http://localhost:3000", "https://dm-chat-app.onrender.com"],
   credentials: true,
   secure: true,
 };
