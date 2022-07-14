@@ -80,10 +80,7 @@ module.exports = {
     // console.log(updatedConversation);
     //server receive user message
     // console.log("Message inserted", messageInserted, data.clientId);
-    userSocket.emit(event.MESSAGE_SENT, {
-      ...messageInserted,
-      clientId: data.clientId,
-    });
+    let online = false;
 
     //send message to people in conversation ID
     const members = await memberModel.getMemberByConversationId(
@@ -92,12 +89,27 @@ module.exports = {
     for (const member of members) {
       const socket = await userSocketMap.get(member.username);
       if (socket) {
-        if (member.username != data.sender) {
-          socket.emit(event.RECEIVE_MESSAGE, messageInserted);
-        }
         await fillDataConversation(updatedConversation, member.username);
         socket.emit(event.CONVERSATION_CHANGE, updatedConversation);
+        if (member.username != data.sender) {
+          online = true;
+          console.log("SEND", messageInserted, "TO", member.username);
+          socket.emit(event.RECEIVE_MESSAGE, messageInserted);
+        }
       }
+    }
+
+    if (online) {
+      userSocket.emit(event.MESSAGE_SENT, {
+        ...messageInserted,
+        status: 2,
+        clientId: data.clientId,
+      });
+    } else {
+      userSocket.emit(event.MESSAGE_SENT, {
+        ...messageInserted,
+        clientId: data.clientId,
+      });
     }
   },
 };

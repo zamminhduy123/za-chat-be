@@ -14,8 +14,13 @@ router.get("/", async (req, res) => {
       result.push(userByPhone);
     }
     const userByUsername = await userModel.get(content);
-    if (userByUsername && userByUsername.username !== userByPhone.username) {
-      result.push(userByUsername);
+    if (userByUsername) {
+      if (userByPhone) {
+        if (userByUsername.username !== userByPhone.username)
+          result.push(userByUsername);
+      } else {
+        result.push(userByUsername);
+      }
     }
     result = result.map((el) => ({ ...el, password: "" }));
     res.status(statusCode.SUCCESS).json(result);
