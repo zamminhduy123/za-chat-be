@@ -60,6 +60,57 @@ const sendMessageHandler = require("./socket/sendMessageHandler");
 const conversationModel = require("./models/conversation.model");
 const memberModel = require("./models/member.model");
 const messageModel = require("./models/message.model");
+const { statusCode } = require("./constant");
+const { OfflineQueue } = require("./offlineQueue");
+const keyModel = require("./models/key.model");
+
+app.post("/key/:username", async (req, res) => {
+  const username = req.params.username;
+  console.log(username);
+  if (!username) {
+    res.status(statusCode.BAD_REQUEST).send("Need username");
+  }
+  const { publicKey, deviceKey } = req.body;
+
+  if (!publicKey) {
+    res.status(statusCode.BAD_REQUEST).send("Can not add null key");
+  }
+  try {
+    const userByUsername = await userModel.get(username);
+    if (userByUsername) {
+      addedKey = await keyModel.insert(username, publicKey, deviceKey);
+
+      //add to offline queue
+      const conversationOfUser = await conversationModel.getByUsername(
+        username
+      );
+
+      for (const conv of conversationOfUser) {
+        const members = await memberModel.getMemberByConversationId(conv.id);
+
+        if (members.length === 2) {
+          const otherUser = members.filter((m) => m.username !== username)[0];
+          const socket = userSocketMap.get(otherUser.username);
+          if (socket) {
+            socket.emit("NEW_KEY", addedKey);
+            console.log("SEND", addedKey, "TO", otherUser.username);
+          } else {
+            if (!OfflineQueue.offlineQueue[otherUser.username])
+              OfflineQueue.offlineQueue[otherUser.username] = {};
+            OfflineQueue.offlineQueue[otherUser.username][username] =
+              addedKey.publicKey;
+          }
+        }
+      }
+      res.status(statusCode.SUCCESS).send(addedKey.publicKey);
+    } else {
+      res.status(statusCode.BAD_REQUEST).send("Address not existed");
+    }
+  } catch (err) {
+    res.status(statusCode.SERVER_ERROR).send();
+  }
+});
+app.use("/key", require("./api/key.api"));
 
 const disconnectClient = (socket) => {
   console.log("Client disconnect", socket.id);
@@ -96,6 +147,17 @@ io.use(async (socket, next) => {
 
 io.on("connection", async (socket) => {
   console.log("User connected", socket.id);
+
+  //RUNS OFFLINE QUEUE
+  const username = socketUserMap.get(socket);
+  if (OfflineQueue.offlineQueue[username]) {
+    Object.keys(OfflineQueue.offlineQueue[username]).forEach((key) => {
+      const data = OfflineQueue.offlineQueue[username][key];
+      socket.emit("NEW_KEY", { username: key, key: data });
+      delete OfflineQueue.offlineQueue[username][key];
+      console.log("DELETE OFFLINE QUEUE", OfflineQueue.offlineQueue[username]);
+    });
+  }
 
   //PING
   socket.on("PING", (callback) => {

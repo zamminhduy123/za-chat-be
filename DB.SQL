@@ -4,6 +4,8 @@ DROP TABLE IF EXISTS "member" CASCADE;
 DROP TABLE IF EXISTS "message" CASCADE;
 DROP TABLE IF EXISTS "last_message" CASCADE;
 
+DROP TABLE IF EXISTS "publicKey" CASCADE;
+
 -- ======================================
 -- Create table
 -- ======================================
@@ -28,6 +30,15 @@ VALUES
 	( 'user2', '$2b$10$8RXK4w.tYJ4XTO0ZwnkiJuAieFMfrXtTV4UBxpVpJrGMYKnUt6sBy', 'I lon mút','0123456789', 'https://ichef.bbci.co.uk/news/976/cpsprodpb/7727/production/_103330503_musk3.jpg'),
 	( 'user3', '$2b$10$8RXK4w.tYJ4XTO0ZwnkiJuAieFMfrXtTV4UBxpVpJrGMYKnUt6sBy', 'Mắc zức cờ bớt','1234567890', 'https://vtv1.mediacdn.vn/thumb_w/650/2021/4/25/photo-1-1619306202198493971443.jpg'),
 	( 'user4', '$2b$10$8RXK4w.tYJ4XTO0ZwnkiJuAieFMfrXtTV4UBxpVpJrGMYKnUt6sBy', 'Hải Mentor','0917560996', 'https://toiyeubitcoin.sgp1.digitaloceanspaces.com/wp-content/uploads/2021/05/10191256/gia-cho-shiba-inu-02-768x768_0.jpeg');
+
+create table "publicKey" (
+		"deviceKey" varchar(64) PRIMARY KEY,
+	"username" varchar(50), -- PRIMARYKEY <=> UNIQUE, NOT NULL
+	"publicKey" varchar(64),
+
+
+	FOREIGN KEY (username) REFERENCES "user"(username)
+);
 
 CREATE TABLE "conversation" (
 	"id" serial PRIMARY KEY,

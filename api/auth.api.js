@@ -143,3 +143,4 @@ router.post("/register", upload.single("avatar"), async (req, res) => {
 });
 
 module.exports = router;
+ 

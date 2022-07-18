@@ -17,7 +17,7 @@ module.exports = {
     // console.log("Message receive from", data);
     const userSocket = userSocketMap.get(data.sender);
 
-    const users = data.to;
+    const receiver = data.to;
     const messageError = {
       ...data,
       status: 4,
@@ -28,7 +28,7 @@ module.exports = {
       updatedConversation = await conversationModel.get(data.conversation_id);
     } else {
       updatedConversation = await conversationModel.getDirectConversation(
-        users[0],
+        receiver,
         data.sender
       );
       // console.log("EXISTED", updatedConversation);
@@ -37,7 +37,7 @@ module.exports = {
           //create conversation
           updatedConversation =
             await conversationModel.createConversationWithUsers([
-              ...users,
+              receiver,
               data.sender,
             ]);
         } catch (err) {
@@ -48,12 +48,13 @@ module.exports = {
         }
       }
     }
-    // console.log("updated conversation", updatedConversation);
+    console.log("content", data.content);
     const newMessage = {
       sender: data.sender,
       type: data.type,
-      content: data.content,
+      content: +data.type === 0 ? data.content : JSON.stringify(data.content),
       conversation_id: updatedConversation.id,
+      to: receiver,
     };
     let messageInserted;
     try {
