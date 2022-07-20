@@ -28,11 +28,11 @@ module.exports = {
   },
   getByUsername: async (username) => {
     const getByUsername = pgp.as.format(
-      `SELECT * FROM "${tbName}" where "${tbFileds.username}"='${username}'`
+      `SELECT * FROM "${tbName}" where "${tbFileds.username}"='${username}' ORDER BY ${tbFileds.create_at} DESC LIMIT 1`
     );
     try {
       // one: trả về 1 kết quả
-      const res = await db.any(getByUsername);
+      const res = await db.oneOrNone(getByUsername);
       return res;
     } catch (e) {
       console.log("Error key.model/get", e);
@@ -52,10 +52,10 @@ module.exports = {
       console.log("error key.model/insert:", error);
     }
   },
-  update: async (username, publicKey) => {
+  update: async (key) => {
     const entity = {
-      username,
-      publicKey,
+      key,
+      create_at: Date.now(),
     };
     const qStr =
       pgp.helpers.update(entity, null, table) +

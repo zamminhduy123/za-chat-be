@@ -31,6 +31,7 @@
     "string-similarity": "^4.0.4"
   },
   "devDependencies": {
+    "json-minimizer-webpack-plugin": "^4.0.0",
     "nodemon": "^2.0.15"
   },
   "author": "Duy Nguyen",

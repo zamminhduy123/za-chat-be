@@ -32,10 +32,10 @@ VALUES
 	( 'user4', '$2b$10$8RXK4w.tYJ4XTO0ZwnkiJuAieFMfrXtTV4UBxpVpJrGMYKnUt6sBy', 'Hải Mentor','0917560996', 'https://toiyeubitcoin.sgp1.digitaloceanspaces.com/wp-content/uploads/2021/05/10191256/gia-cho-shiba-inu-02-768x768_0.jpeg');
 
 create table "publicKey" (
-		"deviceKey" varchar(64) PRIMARY KEY,
+	"deviceKey" varchar(64) PRIMARY KEY,
 	"username" varchar(50), -- PRIMARYKEY <=> UNIQUE, NOT NULL
 	"publicKey" varchar(64),
-
+"create_at" timestamp NOT NULL DEFAULT NOW(),
 
 	FOREIGN KEY (username) REFERENCES "user"(username)
 );
@@ -75,6 +75,7 @@ CREATE TABLE "message" (
 	"conversation_id" serial,
 	"sender" varchar(50),
 	"type" numeric DEFAULT 0, -- text
+	"to" varchar(50),
 	"status" numeric DEFAULT 1, -- sent
 	"content" varchar(1000),
 	"create_at" timestamp NOT NULL DEFAULT NOW(),

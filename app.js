@@ -72,18 +72,25 @@ app.post("/key/:username", async (req, res) => {
   }
   const { publicKey, deviceKey } = req.body;
 
-  if (!publicKey) {
+  if (!publicKey || !deviceKey) {
     res.status(statusCode.BAD_REQUEST).send("Can not add null key");
   }
   try {
     const userByUsername = await userModel.get(username);
+    const existed = await keyModel.get(deviceKey);
     if (userByUsername) {
-      addedKey = await keyModel.insert(username, publicKey, deviceKey);
+      if (!existed) {
+        addedKey = await keyModel.insert(username, publicKey, deviceKey);
+      } else {
+        addedKey = await keyModel.update(existed);
+      }
 
       //add to offline queue
       const conversationOfUser = await conversationModel.getByUsername(
         username
       );
+
+      res.status(statusCode.SUCCESS).send(addedKey.publicKey);
 
       for (const conv of conversationOfUser) {
         const members = await memberModel.getMemberByConversationId(conv.id);
@@ -102,7 +109,6 @@ app.post("/key/:username", async (req, res) => {
           }
         }
       }
-      res.status(statusCode.SUCCESS).send(addedKey.publicKey);
     } else {
       res.status(statusCode.BAD_REQUEST).send("Address not existed");
     }

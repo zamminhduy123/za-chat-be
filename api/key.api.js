@@ -21,7 +21,7 @@ router.get("/:username", async (req, res) => {
       const key = await keyModel.get(deviceKey);
       console.log("KEY", key);
       if (key) {
-        res.status(statusCode.SUCCESS).json({ keys: [key] });
+        res.status(statusCode.SUCCESS).json({ key: key });
       } else {
         res.status(statusCode.BAD_REQUEST).send("Key not found");
       }
@@ -33,9 +33,8 @@ router.get("/:username", async (req, res) => {
       const user = await userModel.get(username);
       if (user) {
         const keyOfUsername = await keyModel.getByUsername(username);
-        console.log("KEY", keyOfUsername);
         if (keyOfUsername) {
-          res.status(statusCode.SUCCESS).json({ keys: keyOfUsername });
+          res.status(statusCode.SUCCESS).json({ key: keyOfUsername });
         } else {
           res.status(statusCode.BAD_REQUEST).send("No key with given username");
         }
