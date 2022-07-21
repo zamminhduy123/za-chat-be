@@ -20,6 +20,7 @@ CREATE TABLE "user" (
 	"gender" numeric DEFAULT 0,
 	"phone" varchar(10),
 	"avatar" varchar(1000),
+	"hashKey" varchar(256),
 	"create_at" timestamp NOT NULL DEFAULT NOW()
 );
 

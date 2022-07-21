@@ -89,6 +89,7 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const path = require("path");
 const fs = require("fs");
+const crypto = require("crypto");
 
 router.post("/register", upload.single("avatar"), async (req, res) => {
   const { username, password, name, phone, gender } = req.body;
@@ -127,6 +128,7 @@ router.post("/register", upload.single("avatar"), async (req, res) => {
       console.log("err uploading image to cloudinary", err);
     }
   }
+
   const rs = await accountModel.insert({
     username,
     password: hashedPassword,
@@ -134,6 +136,7 @@ router.post("/register", upload.single("avatar"), async (req, res) => {
     phone,
     gender,
     avatar: uploadResult.url,
+    hashKey: crypto.createHash("sha256").update(username).digest("base64"),
   });
   if (rs) {
     res.status(statusCode.CREATED).send("Account created successfully");
@@ -142,5 +145,13 @@ router.post("/register", upload.single("avatar"), async (req, res) => {
   }
 });
 
+router.get("/hashKey", async (req, res) => {
+  const user = await userModel.get(res.locals.username);
+  if (user) {
+    res.status(statusCode.SUCCESS).send(user.hashKey);
+  } else {
+    res.status(statusCode.BAD_REQUEST).send("User not found");
+  }
+});
+
 module.exports = router;
- 

@@ -53,14 +53,10 @@ module.exports = {
     }
   },
   update: async (key) => {
-    const entity = {
-      key,
-      create_at: Date.now(),
-    };
-    const qStr =
-      pgp.helpers.update(entity, null, table) +
-      ` WHERE "${tbFileds.username}"='${username}' ` +
-      "RETURNING *";
+    const qStr = pgp.as.format(
+      `UPDATE $1 SET ${tbFileds.create_at}=NOw() WHERE "${tbFileds.publicKey}"='${key.publicKey}' returning *`,
+      table
+    );
     try {
       const res = await db.one(qStr);
       return res;

@@ -11,6 +11,7 @@ const tbFileds = {
   phone: "phone",
   created_at: "created_at",
   lastOnline: "lastOnline",
+  hashKey: "hashKey",
 };
 const table = new pgp.helpers.TableName({
   table: tbName,
