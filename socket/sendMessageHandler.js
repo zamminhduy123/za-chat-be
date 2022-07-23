@@ -14,7 +14,7 @@ const imageFileHandler = require("../helper/imageFileHandler");
 
 module.exports = {
   invoke: async (userSocketMap, data) => {
-    // console.log("Message receive from", data);
+    console.log("Message receive from", data);
     const userSocket = userSocketMap.get(data.sender);
 
     const receiver = data.to;

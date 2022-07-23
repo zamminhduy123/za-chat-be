@@ -24,13 +24,13 @@ CREATE TABLE "user" (
 	"create_at" timestamp NOT NULL DEFAULT NOW()
 );
 
-INSERT INTO "user"("username", "password", "name","phone","avatar")
+INSERT INTO "user"("username", "password", "name","phone","avatar","hashKey")
 VALUES 
-	('user', '$2b$10$8RXK4w.tYJ4XTO0ZwnkiJuAieFMfrXtTV4UBxpVpJrGMYKnUt6sBy', 'Duy','0399477967', 'https://assets.teenvogue.com/photos/60802540112a89b8d0d504e0/4:3/w_3711,h_2783,c_limit/GettyImages-1199371669.jpg'),
-	( 'user1', '$2b$10$8RXK4w.tYJ4XTO0ZwnkiJuAieFMfrXtTV4UBxpVpJrGMYKnUt6sBy', 'Kendall Jenner', '0909320249','https://kenh14cdn.com/thumb_w/660/203336854389633024/2021/9/15/gettyimages-1340153581-1631680268419553194521.jpeg'),
-	( 'user2', '$2b$10$8RXK4w.tYJ4XTO0ZwnkiJuAieFMfrXtTV4UBxpVpJrGMYKnUt6sBy', 'I lon mút','0123456789', 'https://ichef.bbci.co.uk/news/976/cpsprodpb/7727/production/_103330503_musk3.jpg'),
-	( 'user3', '$2b$10$8RXK4w.tYJ4XTO0ZwnkiJuAieFMfrXtTV4UBxpVpJrGMYKnUt6sBy', 'Mắc zức cờ bớt','1234567890', 'https://vtv1.mediacdn.vn/thumb_w/650/2021/4/25/photo-1-1619306202198493971443.jpg'),
-	( 'user4', '$2b$10$8RXK4w.tYJ4XTO0ZwnkiJuAieFMfrXtTV4UBxpVpJrGMYKnUt6sBy', 'Hải Mentor','0917560996', 'https://toiyeubitcoin.sgp1.digitaloceanspaces.com/wp-content/uploads/2021/05/10191256/gia-cho-shiba-inu-02-768x768_0.jpeg');
+	('user', '$2b$10$8RXK4w.tYJ4XTO0ZwnkiJuAieFMfrXtTV4UBxpVpJrGMYKnUt6sBy', 'Duy','0399477967', 'https://assets.teenvogue.com/photos/60802540112a89b8d0d504e0/4:3/w_3711,h_2783,c_limit/GettyImages-1199371669.jpg','jhasgbfaysdfvbhsdvg'),
+	( 'user1', '$2b$10$8RXK4w.tYJ4XTO0ZwnkiJuAieFMfrXtTV4UBxpVpJrGMYKnUt6sBy', 'Kendall Jenner', '0909320249','https://kenh14cdn.com/thumb_w/660/203336854389633024/2021/9/15/gettyimages-1340153581-1631680268419553194521.jpeg','jhasgbfayasdasdasdfvbhsdvg'),
+	( 'user2', '$2b$10$8RXK4w.tYJ4XTO0ZwnkiJuAieFMfrXtTV4UBxpVpJrGMYKnUt6sBy', 'I lon mút','0123456789', 'https://ichef.bbci.co.uk/news/976/cpsprodpb/7727/production/_103330503_musk3.jpg','jhasgbfa12312ysasd123dfvbhsdvg'),
+	( 'user3', '$2b$10$8RXK4w.tYJ4XTO0ZwnkiJuAieFMfrXtTV4UBxpVpJrGMYKnUt6sBy', 'Mắc zức cờ bớt','1234567890', 'https://vtv1.mediacdn.vn/thumb_w/650/2021/4/25/photo-1-1619306202198493971443.jpg','jhasgbfaysdf123123ssvbhsdvg'),
+	( 'user4', '$2b$10$8RXK4w.tYJ4XTO0ZwnkiJuAieFMfrXtTV4UBxpVpJrGMYKnUt6sBy', 'Hải Mentor','0917560996', 'https://toiyeubitcoin.sgp1.digitaloceanspaces.com/wp-content/uploads/2021/05/10191256/gia-cho-shiba-inu-02-768x768_0.jpeg','xczxcgbfaysdfvbhsdvg');
 
 create table "publicKey" (
 	"deviceKey" varchar(64) PRIMARY KEY,

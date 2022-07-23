@@ -136,7 +136,7 @@ io.use(async (socket, next) => {
   } else {
     const cookie = socket.handshake.headers.cookie.slice(4);
     const tokenData = require("jsonwebtoken").decode(cookie, true);
-    // console.log(tokenData);
+    console.log(socket.handshake.headers);
     const user = await userModel.get(tokenData.username);
     if (user) {
       const existedSocket = userSocketMap.get(user.username);
@@ -172,7 +172,8 @@ io.on("connection", async (socket) => {
     });
   });
 
-  socket.on("SEND_MESSAGE", async (newMessage) => {
+  socket.on("SEND_MESSAGE", async (newMessage,callback) => {
+    callback();
     await sendMessageHandler.invoke(userSocketMap, newMessage);
   });
   socket.on("NEW_MESSAGE_RECEIVED", async (sentMessage) => {
@@ -189,7 +190,8 @@ io.on("connection", async (socket) => {
     //set register
     typingListen.set(data.sender, data.conversation_id);
   });
-  socket.on("TYPING_SEND", async (data) => {
+  socket.on("TYPING_SEND", async (data,callback) => {
+    callback();
     const conversation_id = typingListen.get(data);
     if (conversation_id) {
       const members = await memberModel.getMemberByConversationId(
