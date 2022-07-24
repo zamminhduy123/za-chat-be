@@ -104,8 +104,7 @@ app.post("/key/:username", async (req, res) => {
           } else {
             if (!OfflineQueue.offlineQueue[otherUser.username])
               OfflineQueue.offlineQueue[otherUser.username] = {};
-            OfflineQueue.offlineQueue[otherUser.username][username] =
-              addedKey.publicKey;
+            OfflineQueue.offlineQueue[otherUser.username][username] = addedKey
           }
         }
       }
@@ -134,9 +133,12 @@ io.use(async (socket, next) => {
   ) {
     socket.disconnect();
   } else {
-    const cookie = socket.handshake.headers.cookie.slice(4);
+    const cookie = socket.handshake.headers.cookie.split(" ").filter(str => {
+
+      return str[0] === 'j' && str[1] === 'w' && str[2] === 't'
+    })[0].slice(4);
     const tokenData = require("jsonwebtoken").decode(cookie, true);
-    console.log(socket.handshake.headers);
+    console.log(cookie);
     const user = await userModel.get(tokenData.username);
     if (user) {
       const existedSocket = userSocketMap.get(user.username);
@@ -159,7 +161,7 @@ io.on("connection", async (socket) => {
   if (OfflineQueue.offlineQueue[username]) {
     Object.keys(OfflineQueue.offlineQueue[username]).forEach((key) => {
       const data = OfflineQueue.offlineQueue[username][key];
-      socket.emit("NEW_KEY", { username: key, key: data });
+      socket.emit("NEW_KEY", data);
       delete OfflineQueue.offlineQueue[username][key];
       console.log("DELETE OFFLINE QUEUE", OfflineQueue.offlineQueue[username]);
     });
@@ -176,7 +178,8 @@ io.on("connection", async (socket) => {
     callback();
     await sendMessageHandler.invoke(userSocketMap, newMessage);
   });
-  socket.on("NEW_MESSAGE_RECEIVED", async (sentMessage) => {
+  socket.on("NEW_MESSAGE_RECEIVED", async (sentMessage,callback) => {
+    callback(); 
     sentMessage.status = 2;
     try {
       const message = await messageModel.updateStatus(sentMessage);
@@ -186,7 +189,8 @@ io.on("connection", async (socket) => {
       console.log(err);
     }
   });
-  socket.on("TYPING_REGISTER", async (data) => {
+  socket.on("TYPING_REGISTER", async (data,callback) => {
+    callback(); 
     //set register
     typingListen.set(data.sender, data.conversation_id);
   });
