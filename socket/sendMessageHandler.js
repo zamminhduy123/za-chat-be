@@ -95,7 +95,10 @@ module.exports = {
         if (member.username != data.sender) {
           online = true;
           console.log("SEND", messageInserted, "TO", member.username);
-          socket.emit(event.RECEIVE_MESSAGE, messageInserted);
+          socket.emit(event.RECEIVE_MESSAGE, {
+            ...messageInserted,
+            status: 2,
+          });
         }
       }
     }

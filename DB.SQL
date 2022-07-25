@@ -78,7 +78,7 @@ CREATE TABLE "message" (
 	"type" numeric DEFAULT 0, -- text
 	"to" varchar(50),
 	"status" numeric DEFAULT 1, -- sent
-	"content" varchar(1000),
+	"content" varchar(3500),
 	"create_at" timestamp NOT NULL DEFAULT NOW(),
 	"delete_at" timestamp,
 	
